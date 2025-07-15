@@ -446,6 +446,7 @@ body {
 }
 
 .product-image {
+  display : none ;
   position: relative;
   margin-bottom: var(--space-4);
   border-radius: var(--radius-xl);
@@ -453,6 +454,7 @@ body {
 }
 
 .product-img {
+  display : none ;
   width: 100%;
   height: 200px;
   object-fit: cover;
