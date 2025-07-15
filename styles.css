@@ -428,6 +428,11 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: var(--space-6);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Product Card */
@@ -438,15 +443,38 @@ body {
   padding: var(--space-6);
   transition: var(--transition-normal);
   border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
 }
 
-.product-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-2px);
+/* التناوب في الخلفيات */
+.product-card:nth-child(odd) {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid rgba(241, 245, 249, 0.8);
+}
+
+.product-card:nth-child(even) {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* تأثيرات hover محسنة */
+.product-card:nth-child(odd):hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.product-card:nth-child(even):hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(139, 92, 246, 0.3);
 }
 
 .product-image {
-  display : none ;
+  display: none ;
   position: relative;
   margin-bottom: var(--space-4);
   border-radius: var(--radius-xl);
@@ -454,7 +482,7 @@ body {
 }
 
 .product-img {
-  display : none ;
+  display: none;
   width: 100%;
   height: 200px;
   object-fit: cover;
@@ -478,6 +506,9 @@ body {
 .product-badge.featured {
   background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
   color: white;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3), 0 0 20px rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .product-info {
@@ -490,6 +521,7 @@ body {
   color: var(--text-primary);
   margin-bottom: var(--space-2);
   font-family: var(--font-secondary);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .product-description {
@@ -497,6 +529,7 @@ body {
   font-size: 0.875rem;
   line-height: 1.5;
   margin-bottom: var(--space-4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .product-price {
@@ -504,6 +537,7 @@ body {
   font-weight: 800;
   color: var(--primary);
   margin-bottom: var(--space-4);
+  text-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
 }
 
 .currency {
@@ -518,6 +552,12 @@ body {
   gap: var(--space-4);
   padding: var(--space-3) 0;
   border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  margin: var(--space-2) calc(-1 * var(--space-2));
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .stat-item {
@@ -538,6 +578,13 @@ body {
   gap: var(--space-3);
   border-top: 1px solid var(--border);
   padding-top: var(--space-4);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-lg);
+  margin: var(--space-4) calc(-1 * var(--space-2)) calc(-1 * var(--space-2));
+  padding: var(--space-4) var(--space-4) var(--space-4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 .action-row {
@@ -549,6 +596,59 @@ body {
   flex: 1;
   font-size: 0.75rem;
   padding: var(--space-2) var(--space-3);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* تحسينات أزرار الإجراءات */
+.product-actions .btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-link:hover {
+  background: rgba(59, 130, 246, 0.15);
+  backdrop-filter: blur(8px);
+}
+
+.btn-copy:hover {
+  background: rgba(100, 116, 139, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.btn-edit:hover {
+  background: var(--warning);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-delete:hover {
+  background: var(--danger);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-refresh:hover {
+  background: rgba(100, 116, 139, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* تأثيرات إضافية للبطاقات */
+.product-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.product-card:hover::before {
+  opacity: 1;
 }
 
 /* Modal Styles */
@@ -714,4 +814,4 @@ body {
     margin: var(--space-4);
     width: calc(100% - var(--space-8));
   }
-}
+  }
