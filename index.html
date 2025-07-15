@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Produits - YouzinElegancia</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="#" class="logo">
+                    <i class="fas fa-gem"></i>
+                    <span>YouzinElegancia</span>
+                </a>
+            </div>
+            
+            <div class="header-right">
+                <button class="lang-toggle" id="langToggle">
+                    <i class="fas fa-globe"></i>
+                    <span id="langText">Français</span>
+                </button>
+                
+                <div class="user-menu">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span data-key="dashboard">Tableau de bord</span>
+                        </a>
+                        <a href="#" class="dropdown-item">
+                            <i class="fas fa-cog"></i>
+                            <span data-key="settings">Paramètres</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span data-key="logout">Déconnexion</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Page Title -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-box"></i>
+                <span data-key="my_products">Mes Produits</span>
+            </h1>
+            <p class="page-subtitle" data-key="manage_products">Gérez tous vos produits depuis cette page</p>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <button class="btn btn-primary add-product-btn">
+                    <i class="fas fa-plus"></i>
+                    <span data-key="add_new_product">Ajouter un nouveau produit</span>
+                </button>
+            </div>
+            
+            <div class="toolbar-right">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Rechercher un produit..." data-placeholder="search_product">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="sort-dropdown">
+                    <select class="sort-select">
+                        <option value="newest" data-key="newest">Plus récent</option>
+                        <option value="price_low" data-key="price_low">Prix croissant</option>
+                        <option value="price_high" data-key="price_high">Prix décroissant</option>
+                        <option value="most_viewed" data-key="most_viewed">Plus vues</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid">
+            <!-- Product Card 1 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/300x200" alt="Montre Élégante" class="product-img">
+                    <div class="product-badge featured">
+                        <i class="fas fa-star"></i>
+                        <span data-key="featured">Mis en avant</span>
+                    </div>
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">Montre Élégante Premium</h3>
+                    <p class="product-description">Une montre de luxe avec un design moderne et élégant, parfaite pour toutes les occasions.</p>
+                    <div class="product-price">25,000 <span class="currency">DZD</span></div>
+                    
+                    <div class="product-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span>1,234</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>45</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>15 Jan 2025</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <div class="action-row">
+                        <button class="btn btn-link landing-btn">
+                            <i class="fas fa-globe"></i>
+                            <span data-key="landing_page">Page de destination</span>
+                        </button>
+                        <button class="btn btn-copy copy-link-btn">
+                            <i class="fas fa-copy"></i>
+                            <span data-key="copy_link">Copier le lien</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button class="btn btn-toggle active toggle-btn">
+                            <i class="fas fa-toggle-on"></i>
+                            <span data-key="active">Activé</span>
+                        </button>
+                        <button class="btn btn-edit edit-btn">
+                            <i class="fas fa-edit"></i>
+                            <span data-key="edit">Modifier</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button class="btn btn-refresh refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span data-key="refresh">Actualiser</span>
+                        </button>
+                        <button class="btn btn-delete delete-btn">
+                            <i class="fas fa-trash"></i>
+                            <span data-key="delete">Supprimer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 2 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/300x200" alt="Sac à Main Cuir" class="product-img">
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">Sac à Main en Cuir Véritable</h3>
+                    <p class="product-description">Sac à main artisanal en cuir véritable, spacieux et durable avec plusieurs compartiments.</p>
+                    <div class="product-price">18,500 <span class="currency">DZD</span></div>
+                    
+                    <div class="product-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span>892</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>23</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>12 Jan 2025</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <div class="action-row">
+                        <button class="btn btn-link landing-btn">
+                            <i class="fas fa-globe"></i>
+                            <span data-key="landing_page">Page de destination</span>
+                        </button>
+                        <button class="btn btn-copy copy-link-btn">
+                            <i class="fas fa-copy"></i>
+                            <span data-key="copy_link">Copier le lien</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button class="btn btn-toggle inactive toggle-btn">
+                            <i class="fas fa-toggle-off"></i>
+                            <span data-key="inactive">Désactivé</span>
+                        </button>
+                        <button class="btn btn-edit edit-btn">
+                            <i class="fas fa-edit"></i>
+                            <span data-key="edit">Modifier</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button class="btn btn-refresh refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span data-key="refresh">Actualiser</span>
+                        </button>
+                        <button class="btn btn-delete delete-btn">
+                            <i class="fas fa-trash"></i>
+                            <span data-key="delete">Supprimer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 3 -->
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/300x200" alt="Parfum Oriental" class="product-img">
+                    <div class="product-badge featured">
+                        <i class="fas fa-star"></i>
+                        <span data-key="featured">Mis en avant</span>
+                    </div>
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">Parfum Oriental Authentique</h3>
+                    <p class="product-description">Parfum oriental aux notes boisées et florales, fabriqué avec des ingrédients naturels de haute qualité.</p>
+                    <div class="product-price">32,000 <span class="currency">DZD</span></div>
+                    
+                    <div class="product-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-eye"></i>
+                            <span>2,156</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>78</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>08 Jan 2025</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-actions">
+                    <div class="action-row">
+                        <button class="btn btn-link landing-btn">
+                            <i class="fas fa-globe"></i>
+                            <span data-key="landing_page">Page de destination</span>
+                        </button>
+                        <button class="btn btn-copy copy-link-btn">
+                            <i class="fas fa-copy"></i>
+                            <span data-key="copy_link">Copier le lien</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button class="btn btn-toggle active toggle-btn">
+                            <i class="fas fa-toggle-on"></i>
+                            <span data-key="active">Activé</span>
+                        </button>
+                        <button class="btn btn-edit edit-btn">
+                            <i class="fas fa-edit"></i>
+                            <span data-key="edit">Modifier</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-row">
+                        <button class="btn btn-refresh refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            <span data-key="refresh">Actualiser</span>
+                        </button>
+                        <button class="btn btn-delete delete-btn">
+                            <i class="fas fa-trash"></i>
+                            <span data-key="delete">Supprimer</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" data-key="confirm_delete">Confirmer la suppression</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message" data-key="delete_confirmation">Êtes-vous sûr de vouloir supprimer ce produit ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDelete" data-key="cancel">Annuler</button>
+                <button class="btn btn-danger" id="confirmDelete" data-key="delete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
