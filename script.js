@@ -28,17 +28,7 @@ const translations = {
         product_deactivated: "Produit désactivé",
         product_refreshed: "Produit actualisé",
         product_deleted: "Produit supprimé avec succès",
-        language: "Français",
-        loading: "Chargement...",
-        no_products: "Aucun produit trouvé",
-        filter_all: "Tous",
-        filter_active: "Actifs",
-        filter_inactive: "Inactifs",
-        filter_featured: "Mis en avant",
-        bulk_actions: "Actions groupées",
-        select_all: "Tout sélectionner",
-        export_data: "Exporter les données",
-        import_data: "Importer les données"
+        language: "Français"
     },
     en: {
         dashboard: "Dashboard",
@@ -47,7 +37,7 @@ const translations = {
         my_products: "My Products",
         manage_products: "Manage all your products from this page",
         add_new_product: "Add new product",
-        search_product: "Search product...",
+        search_product: "Search for a product...",
         newest: "Newest",
         price_low: "Price ascending",
         price_high: "Price descending",
@@ -68,17 +58,7 @@ const translations = {
         product_deactivated: "Product deactivated",
         product_refreshed: "Product refreshed",
         product_deleted: "Product deleted successfully",
-        language: "English",
-        loading: "Loading...",
-        no_products: "No products found",
-        filter_all: "All",
-        filter_active: "Active",
-        filter_inactive: "Inactive",
-        filter_featured: "Featured",
-        bulk_actions: "Bulk actions",
-        select_all: "Select all",
-        export_data: "Export data",
-        import_data: "Import data"
+        language: "English"
     }
 };
 
@@ -86,11 +66,6 @@ const translations = {
 let currentLanguage = 'fr';
 let currentProductToDelete = null;
 let products = [];
-let filteredProducts = [];
-let selectedProducts = new Set();
-let currentFilter = 'all';
-let isLoading = false;
-let searchTimeout = null;
 
 // DOM Elements
 const elements = {
@@ -111,204 +86,10 @@ const elements = {
 // Initialize application
 document.addEventListener('DOMContentLoaded', function() {
     initializeEventListeners();
-    createAdvancedUI();
     loadProducts();
     updateLanguage();
     setupSearchAndSort();
-    initializeAnimations();
-    setupKeyboardShortcuts();
 });
-
-// Create advanced UI elements
-function createAdvancedUI() {
-    createFilterTabs();
-    createBulkActionsBar();
-    createLoadingOverlay();
-    createAdvancedSearch();
-    createStatsCards();
-}
-
-// Create filter tabs
-function createFilterTabs() {
-    const toolbar = document.querySelector('.toolbar');
-    const filterTabs = document.createElement('div');
-    filterTabs.className = 'filter-tabs';
-    filterTabs.innerHTML = `
-        <button class="filter-tab active" data-filter="all">
-            <span data-key="filter_all">Tous</span>
-            <span class="tab-count" id="count-all">0</span>
-        </button>
-        <button class="filter-tab" data-filter="active">
-            <span data-key="filter_active">Actifs</span>
-            <span class="tab-count" id="count-active">0</span>
-        </button>
-        <button class="filter-tab" data-filter="inactive">
-            <span data-key="filter_inactive">Inactifs</span>
-            <span class="tab-count" id="count-inactive">0</span>
-        </button>
-        <button class="filter-tab" data-filter="featured">
-            <span data-key="filter_featured">Mis en avant</span>
-            <span class="tab-count" id="count-featured">0</span>
-        </button>
-    `;
-    
-    toolbar.parentNode.insertBefore(filterTabs, toolbar);
-    
-    // Add event listeners
-    filterTabs.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.addEventListener('click', () => handleFilterChange(tab.dataset.filter));
-    });
-}
-
-// Create bulk actions bar
-function createBulkActionsBar() {
-    const toolbar = document.querySelector('.toolbar');
-    const bulkBar = document.createElement('div');
-    bulkBar.className = 'bulk-actions-bar';
-    bulkBar.innerHTML = `
-        <div class="bulk-left">
-            <label class="bulk-checkbox">
-                <input type="checkbox" id="selectAll">
-                <span class="checkmark"></span>
-                <span data-key="select_all">Tout sélectionner</span>
-            </label>
-            <span class="selected-count">0 sélectionnés</span>
-        </div>
-        <div class="bulk-right">
-            <button class="btn btn-outline bulk-activate">
-                <i class="fas fa-toggle-on"></i>
-                Activer
-            </button>
-            <button class="btn btn-outline bulk-deactivate">
-                <i class="fas fa-toggle-off"></i>
-                Désactiver
-            </button>
-            <button class="btn btn-outline bulk-delete">
-                <i class="fas fa-trash"></i>
-                Supprimer
-            </button>
-            <button class="btn btn-primary export-btn">
-                <i class="fas fa-download"></i>
-                <span data-key="export_data">Exporter</span>
-            </button>
-        </div>
-    `;
-    
-    toolbar.parentNode.insertBefore(bulkBar, toolbar);
-    
-    // Add event listeners
-    document.getElementById('selectAll').addEventListener('change', handleSelectAll);
-    bulkBar.querySelector('.bulk-activate').addEventListener('click', () => handleBulkAction('activate'));
-    bulkBar.querySelector('.bulk-deactivate').addEventListener('click', () => handleBulkAction('deactivate'));
-    bulkBar.querySelector('.bulk-delete').addEventListener('click', () => handleBulkAction('delete'));
-    bulkBar.querySelector('.export-btn').addEventListener('click', handleExportData);
-}
-
-// Create loading overlay
-function createLoadingOverlay() {
-    const overlay = document.createElement('div');
-    overlay.className = 'loading-overlay';
-    overlay.innerHTML = `
-        <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p data-key="loading">Chargement...</p>
-        </div>
-    `;
-    document.body.appendChild(overlay);
-}
-
-// Create advanced search
-function createAdvancedSearch() {
-    const searchBox = document.querySelector('.search-box');
-    const advancedSearch = document.createElement('div');
-    advancedSearch.className = 'advanced-search';
-    advancedSearch.innerHTML = `
-        <button class="advanced-search-toggle">
-            <i class="fas fa-sliders-h"></i>
-        </button>
-        <div class="advanced-search-panel">
-            <div class="search-filters">
-                <div class="filter-group">
-                    <label>Prix minimum</label>
-                    <input type="number" id="minPrice" placeholder="0">
-                </div>
-                <div class="filter-group">
-                    <label>Prix maximum</label>
-                    <input type="number" id="maxPrice" placeholder="100000">
-                </div>
-                <div class="filter-group">
-                    <label>Date de création</label>
-                    <input type="date" id="dateFilter">
-                </div>
-            </div>
-            <div class="filter-actions">
-                <button class="btn btn-primary apply-filters">Appliquer</button>
-                <button class="btn btn-outline clear-filters">Effacer</button>
-            </div>
-        </div>
-    `;
-    
-    searchBox.appendChild(advancedSearch);
-    
-    // Add event listeners
-    const toggle = advancedSearch.querySelector('.advanced-search-toggle');
-    const panel = advancedSearch.querySelector('.advanced-search-panel');
-    
-    toggle.addEventListener('click', () => {
-        panel.classList.toggle('show');
-        toggle.classList.toggle('active');
-    });
-    
-    advancedSearch.querySelector('.apply-filters').addEventListener('click', applyAdvancedFilters);
-    advancedSearch.querySelector('.clear-filters').addEventListener('click', clearAdvancedFilters);
-}
-
-// Create stats cards
-function createStatsCards() {
-    const pageHeader = document.querySelector('.page-header');
-    const statsCards = document.createElement('div');
-    statsCards.className = 'stats-cards';
-    statsCards.innerHTML = `
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fas fa-box"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-number" id="totalProducts">0</div>
-                <div class="stat-label">Total Produits</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon success">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-number" id="activeProducts">0</div>
-                <div class="stat-label">Produits Actifs</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon warning">
-                <i class="fas fa-eye"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-number" id="totalViews">0</div>
-                <div class="stat-label">Vues Totales</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon primary">
-                <i class="fas fa-shopping-cart"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-number" id="totalOrders">0</div>
-                <div class="stat-label">Commandes</div>
-            </div>
-        </div>
-    `;
-    
-    pageHeader.appendChild(statsCards);
-}
 
 // Event Listeners Setup
 function initializeEventListeners() {
@@ -340,15 +121,12 @@ function initializeEventListeners() {
     // Add product button
     elements.addProductBtn.addEventListener('click', handleAddProduct);
     
-    // Search and sort with debouncing
-    elements.searchInput.addEventListener('input', debounce(handleSearch, 300));
+    // Search and sort
+    elements.searchInput.addEventListener('input', handleSearch);
     elements.sortSelect.addEventListener('change', handleSort);
     
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
-    
-    // Window resize for responsive handling
-    window.addEventListener('resize', debounce(handleResize, 250));
 }
 
 // Language Management
@@ -356,7 +134,6 @@ function toggleLanguage() {
     currentLanguage = currentLanguage === 'fr' ? 'en' : 'fr';
     updateLanguage();
     updateDirection();
-    showNotification(`Language changed to ${currentLanguage === 'fr' ? 'Français' : 'English'}`, 'info');
 }
 
 function updateLanguage() {
@@ -380,9 +157,6 @@ function updateLanguage() {
             element.placeholder = translation[key];
         }
     });
-    
-    // Update selected count
-    updateSelectedCount();
 }
 
 function updateDirection() {
@@ -399,104 +173,61 @@ function updateDirection() {
 // User Menu Management
 function toggleUserMenu() {
     elements.dropdownMenu.classList.toggle('show');
-    
-    // Add animation
-    if (elements.dropdownMenu.classList.contains('show')) {
-        elements.dropdownMenu.style.animation = 'slideDown 0.3s ease-out';
-    }
 }
 
 // Product Management
 function loadProducts() {
-    showLoading(true);
+    // Simulate loading products from API
+    products = [
+        {
+            id: 1,
+            name: "Montre Élégante Premium",
+            description: "Une montre de luxe avec un design moderne et élégant, parfaite pour toutes les occasions.",
+            price: 25000,
+            currency: "DZD",
+            image: "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
+            views: 1234,
+            orders: 45,
+            date: "15 Jan 2025",
+            featured: true,
+            active: true
+        },
+        {
+            id: 2,
+            name: "Sac à Main en Cuir Véritable",
+            description: "Sac à main artisanal en cuir véritable, spacieux et durable avec plusieurs compartiments.",
+            price: 18500,
+            currency: "DZD",
+            image: "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
+            views: 892,
+            orders: 23,
+            date: "12 Jan 2025",
+            featured: false,
+            active: false
+        },
+        {
+            id: 3,
+            name: "Parfum Oriental Authentique",
+            description: "Parfum oriental aux notes boisées et florales, fabriqué avec des ingrédients naturels de haute qualité.",
+            price: 32000,
+            currency: "DZD",
+            image: "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
+            views: 2156,
+            orders: 78,
+            date: "08 Jan 2025",
+            featured: true,
+            active: true
+        }
+    ];
     
-    // Simulate API call with timeout
-    setTimeout(() => {
-        products = [
-            {
-                id: 1,
-                name: "Montre Élégante Premium",
-                description: "Une montre de luxe avec un design moderne et élégant, parfaite pour toutes les occasions.",
-                price: 25000,
-                currency: "DZD",
-                image: "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
-                views: 1234,
-                orders: 45,
-                date: "2025-01-15",
-                featured: true,
-                active: true,
-                category: "Accessories",
-                tags: ["luxury", "watch", "premium"]
-            },
-            {
-                id: 2,
-                name: "Sac à Main en Cuir Véritable",
-                description: "Sac à main artisanal en cuir véritable, spacieux et durable avec plusieurs compartiments.",
-                price: 18500,
-                currency: "DZD",
-                image: "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
-                views: 892,
-                orders: 23,
-                date: "2025-01-12",
-                featured: false,
-                active: false,
-                category: "Bags",
-                tags: ["leather", "handmade", "bag"]
-            },
-            {
-                id: 3,
-                name: "Parfum Oriental Authentique",
-                description: "Parfum oriental aux notes boisées et florales, fabriqué avec des ingrédients naturels de haute qualité.",
-                price: 32000,
-                currency: "DZD",
-                image: "https://images.pexels.com/photos/965989/pexels-photo-965989.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
-                views: 2156,
-                orders: 78,
-                date: "2025-01-08",
-                featured: true,
-                active: true,
-                category: "Fragrance",
-                tags: ["oriental", "natural", "premium"]
-            },
-            {
-                id: 4,
-                name: "Bijoux Artisanaux",
-                description: "Collection de bijoux faits main avec des matériaux précieux et un design unique.",
-                price: 15000,
-                currency: "DZD",
-                image: "https://images.pexels.com/photos/1454171/pexels-photo-1454171.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop",
-                views: 567,
-                orders: 12,
-                date: "2025-01-10",
-                featured: false,
-                active: true,
-                category: "Jewelry",
-                tags: ["handmade", "jewelry", "unique"]
-            }
-        ];
-        
-        filteredProducts = [...products];
-        renderProducts();
-        updateStats();
-        updateFilterCounts();
-        showLoading(false);
-        
-        // Add entrance animation
-        animateProductCards();
-    }, 1000);
+    renderProducts();
 }
 
-function renderProducts(productsToRender = filteredProducts) {
+function renderProducts(productsToRender = products) {
     elements.productsGrid.innerHTML = '';
     
-    if (productsToRender.length === 0) {
-        showEmptyState();
-        return;
-    }
-    
-    productsToRender.forEach((product, index) => {
+    productsToRender.forEach(product => {
         const productCard = createProductCard(product);
-        productCard.style.animationDelay = `${index * 0.1}s`;
         elements.productsGrid.appendChild(productCard);
     });
 }
@@ -506,38 +237,436 @@ function createProductCard(product) {
     card.className = 'product-card';
     card.setAttribute('data-product-id', product.id);
     
-    const isSelected = selectedProducts.has(product.id);
-    
     card.innerHTML = `
-        <div class="product-header">
-            <label class="product-checkbox">
-                <input type="checkbox" ${isSelected ? 'checked' : ''} data-product-id="${product.id}">
-                <span class="checkmark"></span>
-            </label>
-            <div class="product-menu">
-                <button class="menu-btn">
-                    <i class="fas fa-ellipsis-v"></i>
-                </button>
-                <div class="product-menu-dropdown">
-                    <button data-action="duplicate" data-product-id="${product.id}">
-                        <i class="fas fa-copy"></i>
-                        Dupliquer
-                    </button>
-                    <button data-action="archive" data-product-id="${product.id}">
-                        <i class="fas fa-archive"></i>
-                        Archiver
-                    </button>
-                </div>
-            </div>
-        </div>
-        
         <div class="product-image">
-            <img src="${product.image}" alt="${product.name}" class="product-img" loading="lazy">
+            <img src="${product.image}" alt="${product.name}" class="product-img">
             ${product.featured ? `
                 <div class="product-badge featured">
                     <i class="fas fa-star"></i>
                     <span data-key="featured">${translations[currentLanguage].featured}</span>
                 </div>
             ` : ''}
-            <div class="product-overlay">
-                <button class="overlay-btn preview-btn" data-action="preview" data-product-id=
+        </div>
+        
+        <div class="product-info">
+            <h3 class="product-name">${product.name}</h3>
+            <p class="product-description">${product.description}</p>
+            <div class="product-price">${product.price.toLocaleString()} <span class="currency">${product.currency}</span></div>
+            
+            <div class="product-stats">
+                <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span>${product.views.toLocaleString()}</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>${product.orders}</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>${product.date}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="product-actions">
+            <div class="action-row">
+                <button class="btn btn-link landing-btn" data-action="landing" data-product-id="${product.id}">
+                    <i class="fas fa-globe"></i>
+                    <span data-key="landing_page">${translations[currentLanguage].landing_page}</span>
+                </button>
+                <button class="btn btn-copy copy-link-btn" data-action="copy" data-product-id="${product.id}">
+                    <i class="fas fa-copy"></i>
+                    <span data-key="copy_link">${translations[currentLanguage].copy_link}</span>
+                </button>
+            </div>
+            
+            <div class="action-row">
+                <button class="btn btn-toggle ${product.active ? 'active' : 'inactive'} toggle-btn" data-action="toggle" data-product-id="${product.id}">
+                    <i class="fas fa-toggle-${product.active ? 'on' : 'off'}"></i>
+                    <span data-key="${product.active ? 'active' : 'inactive'}">${product.active ? translations[currentLanguage].active : translations[currentLanguage].inactive}</span>
+                </button>
+                <button class="btn btn-edit edit-btn" data-action="edit" data-product-id="${product.id}">
+                    <i class="fas fa-edit"></i>
+                    <span data-key="edit">${translations[currentLanguage].edit}</span>
+                </button>
+            </div>
+            
+            <div class="action-row">
+                <button class="btn btn-refresh refresh-btn" data-action="refresh" data-product-id="${product.id}">
+                    <i class="fas fa-sync-alt"></i>
+                    <span data-key="refresh">${translations[currentLanguage].refresh}</span>
+                </button>
+                <button class="btn btn-delete delete-btn" data-action="delete" data-product-id="${product.id}">
+                    <i class="fas fa-trash"></i>
+                    <span data-key="delete">${translations[currentLanguage].delete}</span>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners to action buttons
+    addProductActionListeners(card, product);
+    
+    return card;
+}
+
+function addProductActionListeners(card, product) {
+    const buttons = card.querySelectorAll('[data-action]');
+    
+    buttons.forEach(button => {
+        const action = button.getAttribute('data-action');
+        const productId = parseInt(button.getAttribute('data-product-id'));
+        
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleProductAction(action, productId, button);
+        });
+    });
+}
+
+function handleProductAction(action, productId, button) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    switch (action) {
+        case 'landing':
+            handleLandingPage(product);
+            break;
+        case 'copy':
+            handleCopyLink(product, button);
+            break;
+        case 'toggle':
+            handleToggleProduct(product, button);
+            break;
+        case 'edit':
+            handleEditProduct(product);
+            break;
+        case 'refresh':
+            handleRefreshProduct(product, button);
+            break;
+        case 'delete':
+            handleDeleteProduct(product);
+            break;
+    }
+}
+
+function handleLandingPage(product) {
+    // Simulate opening landing page
+    const landingUrl = `https://youzinelegancia.com/product/${product.id}`;
+    window.open(landingUrl, '_blank');
+}
+
+function handleCopyLink(product, button) {
+    const productUrl = `https://youzinelegancia.com/product/${product.id}`;
+    
+    navigator.clipboard.writeText(productUrl).then(() => {
+        showNotification(translations[currentLanguage].link_copied, 'success');
+        
+        // Visual feedback
+        const originalText = button.querySelector('span').textContent;
+        const originalIcon = button.querySelector('i').className;
+        
+        button.querySelector('i').className = 'fas fa-check';
+        button.querySelector('span').textContent = translations[currentLanguage].link_copied;
+        
+        setTimeout(() => {
+            button.querySelector('i').className = originalIcon;
+            button.querySelector('span').textContent = originalText;
+        }, 2000);
+    }).catch(() => {
+        showNotification('Erreur lors de la copie', 'error');
+    });
+}
+
+function handleToggleProduct(product, button) {
+    product.active = !product.active;
+    
+    // Update button appearance
+    const icon = button.querySelector('i');
+    const text = button.querySelector('span');
+    
+    if (product.active) {
+        button.className = 'btn btn-toggle active toggle-btn';
+        icon.className = 'fas fa-toggle-on';
+        text.textContent = translations[currentLanguage].active;
+        text.setAttribute('data-key', 'active');
+        showNotification(translations[currentLanguage].product_activated, 'success');
+    } else {
+        button.className = 'btn btn-toggle inactive toggle-btn';
+        icon.className = 'fas fa-toggle-off';
+        text.textContent = translations[currentLanguage].inactive;
+        text.setAttribute('data-key', 'inactive');
+        showNotification(translations[currentLanguage].product_deactivated, 'info');
+    }
+}
+
+function handleEditProduct(product) {
+    // Simulate opening edit modal/page
+    showNotification(`Modification du produit: ${product.name}`, 'info');
+    // Here you would typically open an edit modal or navigate to edit page
+}
+
+function handleRefreshProduct(product, button) {
+    // Add loading animation
+    const icon = button.querySelector('i');
+    const originalClass = icon.className;
+    
+    icon.className = 'fas fa-spinner fa-spin';
+    button.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+        icon.className = originalClass;
+        button.disabled = false;
+        
+        // Simulate updating product stats
+        product.views += Math.floor(Math.random() * 100);
+        product.orders += Math.floor(Math.random() * 5);
+        
+        // Re-render the product card
+        const productCard = document.querySelector(`[data-product-id="${product.id}"]`);
+        const newCard = createProductCard(product);
+        productCard.replaceWith(newCard);
+        
+        showNotification(translations[currentLanguage].product_refreshed, 'success');
+    }, 1500);
+}
+
+function handleDeleteProduct(product) {
+    currentProductToDelete = product;
+    elements.deleteModal.classList.add('show');
+}
+
+function closeDeleteModal() {
+    elements.deleteModal.classList.remove('show');
+    currentProductToDelete = null;
+}
+
+function confirmDeleteProduct() {
+    if (!currentProductToDelete) return;
+    
+    // Remove product from array
+    products = products.filter(p => p.id !== currentProductToDelete.id);
+    
+    // Remove product card from DOM
+    const productCard = document.querySelector(`[data-product-id="${currentProductToDelete.id}"]`);
+    if (productCard) {
+        productCard.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            productCard.remove();
+        }, 300);
+    }
+    
+    showNotification(translations[currentLanguage].product_deleted, 'success');
+    closeDeleteModal();
+}
+
+function handleAddProduct() {
+    showNotification('Ouverture du formulaire d\'ajout de produit...', 'info');
+    // Here you would typically open an add product modal or navigate to add page
+}
+
+// Search and Sort Functionality
+function setupSearchAndSort() {
+    // Initial setup is done in initializeEventListeners
+}
+
+function handleSearch(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    
+    if (searchTerm === '') {
+        renderProducts();
+        return;
+    }
+    
+    const filteredProducts = products.filter(product => 
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm)
+    );
+    
+    renderProducts(filteredProducts);
+}
+
+function handleSort(e) {
+    const sortValue = e.target.value;
+    let sortedProducts = [...products];
+    
+    switch (sortValue) {
+        case 'newest':
+            sortedProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            break;
+        case 'price_low':
+            sortedProducts.sort((a, b) => a.price - b.price);
+            break;
+        case 'price_high':
+            sortedProducts.sort((a, b) => b.price - a.price);
+            break;
+        case 'most_viewed':
+            sortedProducts.sort((a, b) => b.views - a.views);
+            break;
+    }
+    
+    renderProducts(sortedProducts);
+}
+
+// Notification System
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${getNotificationIcon(type)}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="notification-close">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${getNotificationColor(type)};
+        color: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-width: 300px;
+        animation: slideInRight 0.3s ease-out;
+    `;
+    
+    const closeBtn = notification.querySelector('.notification-close');
+    closeBtn.style.cssText = `
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    `;
+    
+    closeBtn.addEventListener('click', () => notification.remove());
+    closeBtn.addEventListener('mouseenter', () => closeBtn.style.opacity = '1');
+    closeBtn.addEventListener('mouseleave', () => closeBtn.style.opacity = '0.8');
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease-in';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        success: 'check-circle',
+        error: 'exclamation-circle',
+        warning: 'exclamation-triangle',
+        info: 'info-circle'
+    };
+    return icons[type] || 'info-circle';
+}
+
+function getNotificationColor(type) {
+    const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6'
+    };
+    return colors[type] || '#3b82f6';
+}
+
+// Keyboard Shortcuts
+function handleKeyboardShortcuts(e) {
+    // Ctrl/Cmd + K for search focus
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        elements.searchInput.focus();
+    }
+    
+    // Escape to close modal
+    if (e.key === 'Escape') {
+        if (elements.deleteModal.classList.contains('show')) {
+            closeDeleteModal();
+        }
+        if (elements.dropdownMenu.classList.contains('show')) {
+            elements.dropdownMenu.classList.remove('show');
+        }
+    }
+    
+    // Ctrl/Cmd + N for new product
+    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        handleAddProduct();
+    }
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+    }
+    
+    .notification-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+`;
+document.head.appendChild(style);
+
+// Export functions for potential external use
+window.YouzinElegancia = {
+    toggleLanguage,
+    showNotification,
+    loadProducts,
+    handleProductAction
+};
